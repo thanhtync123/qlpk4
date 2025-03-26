@@ -53,17 +53,7 @@
                         style="transition: 0.3s;"
                         onmouseover="this.style.backgroundColor='#ffc107'; this.style.color='#000'; this.style.borderRadius='5px';"
                         onmouseout="if (!this.classList.contains('bg-warning')) { this.style.backgroundColor='transparent'; this.style.color='white'; }">
-                        Khám bệnh
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link fw-semibold 
-                        {{ Request::is('appointments') ? 'bg-warning text-dark rounded' : 'text-white' }}" 
-                        href="/appointments"
-                        style="transition: 0.3s;"
-                        onmouseover="this.style.backgroundColor='#ffc107'; this.style.color='#000'; this.style.borderRadius='5px';"
-                        onmouseout="if (!this.classList.contains('bg-warning')) { this.style.backgroundColor='transparent'; this.style.color='white'; }">
-                        Lịch hẹn
+                        Cận lâm sàng
                     </a>
                 </li>
             </ul>
