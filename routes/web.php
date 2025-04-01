@@ -8,6 +8,7 @@ use App\Http\Controllers\MedicationsController;
 use App\Http\Controllers\ExaminationController;
 use App\Http\Controllers\XRayController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\UltrasoundController;
 
 
 
@@ -42,34 +43,38 @@ Route::prefix('medication')->name('medication.')->group(function () {
 Route::prefix('examination')->name('examination.')->group(function () {
     Route::get('/', [ExaminationController::class, 'index'])->name('index');
     Route::post('/store', [ExaminationController::class, 'store'])->name('store');
-    Route::get('/edit/{id}', [ExaminationController::class, 'edit'])->name('edit');
-    Route::post('/update/{id}', [ExaminationController::class, 'update'])->name('update');
-    Route::delete('/delete/{id}', [ExaminationController::class, 'destroy'])->name('delete');
-
+    // Route::get('/edit/{id}', [ExaminationController::class, 'edit'])->name('edit');
+    // Route::post('/update/{id}', [ExaminationController::class, 'update'])->name('update');
+    // Route::delete('/delete/{id}', [ExaminationController::class, 'destroy'])->name('delete');
+    Route::post('/store-medication', [ExaminationController::class, 'storeMedication']);
+    Route::post('/store-service', [ExaminationController::class, 'storeService']);
+    
     // X-ray routes
     Route::prefix('x-ray')->name('x-ray.')->group(function () {
-        Route::get('/', [XRayController::class, 'showXRayForm'])->name('index');
+        Route::get('/', [XRayController::class, 'index'])->name('index');
         Route::post('/store', [XRayController::class, 'store'])->name('store');
-        Route::get('/edit/{id}', [XRayController::class, 'edit'])->name('edit');
-        Route::post('/update/{id}', [XRayController::class, 'update'])->name('update');
-        Route::delete('/delete/{id}', [XRayController::class, 'destroy'])->name('delete');
-        Route::get('/print/{id}', [XRayController::class, 'print'])->name('print');
+        // Route::get('/edit/{id}', [XRayController::class, 'edit'])->name('edit');
+        // Route::post('/update/{id}', [XRayController::class, 'update'])->name('update');
+        // Route::delete('/delete/{id}', [XRayController::class, 'destroy'])->name('delete');
+        // Route::get('/print/{id}', [XRayController::class, 'print'])->name('print');
     });
+    
 
+    
     // Ultrasound routes
     Route::prefix('ultrasound')->name('ultrasound.')->group(function () {
         Route::get('/', [UltrasoundController::class, 'index'])->name('index');
         Route::post('/store', [UltrasoundController::class, 'store'])->name('store');
-        Route::get('/edit/{id}', [UltrasoundController::class, 'edit'])->name('edit');
-        Route::post('/update/{id}', [UltrasoundController::class, 'update'])->name('update');
-        Route::delete('/delete/{id}', [UltrasoundController::class, 'destroy'])->name('delete');
+        // Route::get('/edit/{id}', [UltrasoundController::class, 'edit'])->name('edit');
+        // Route::post('/update/{id}', [UltrasoundController::class, 'update'])->name('update');
+        // Route::delete('/delete/{id}', [UltrasoundController::class, 'destroy'])->name('delete');
     });
 
     // Test routes
     Route::prefix('test')->name('test.')->group(function () {
-        Route::get('/', [XRayController::class, 'showTestForm']);
-        Route::post('/store', [XRayTestController::class, 'store']);
-        Route::get('/print/{id}', [XRayController::class, 'print']);
+        Route::get('/', [TestController::class, 'index']);
+        Route::post('/store', [TestController::class, 'store']);
+        // Route::get('/print/{id}', [XRayController::class, 'print']);
         // Route::get('/edit/{id}', [TestController::class, 'edit'])->name('edit');
         // Route::post('/update/{id}', [TestController::class, 'update'])->name('update');
         // Route::delete('/delete/{id}', [TestController::class, 'destroy'])->name('delete');
