@@ -31,10 +31,13 @@
                 <th>Đơn vị</th>
                 <th>Liều dùng</th>
                 <th>Đường dùng</th>
+                <th>Số lần uống / ngày</th>
+                <th>Ghi chú</th>
+                <th>Giá</th>
                 <th>Hành động</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="search-results">
             @forelse ($medications as $medication)
             <tr>
                 <td>{{ $medication->id }}</td>
@@ -42,6 +45,9 @@
                 <td>{{ $medication->unit }}</td>
                 <td>{{ $medication->dosage }}</td>
                 <td>{{ $medication->route }}</td>
+                <td>{{ $medication->times_per_day }}</td>
+                <td>{{ $medication->note }}</td>
+                <td>{{ $medication->price }}</td>
                 <td>
                     <a href="{{ route('medication.edit', $medication->id) }}" class="btn btn-warning btn-sm">Sửa</a>
                     
@@ -67,4 +73,55 @@
 
 </div>
 @include('modals._add_medication')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+ $(document).ready(function () {
+    $('#search').on('keyup', function () {
+        let search = $(this).val();
+        $.ajax({
+            url: "{{ route('medication.search') }}",  // Đảm bảo route này chính xác
+            type: "GET",
+            data: { search: search },
+            success: function (response) {
+                let tableBody = $('#search-results');
+                tableBody.empty();
+
+                if (response.medications.length === 0) {
+                    tableBody.append('<tr><td colspan="9" class="text-center">Không tìm thấy thuốc</td></tr>');
+                } else {
+                    // Thêm các hàng thuốc vào bảng
+                    response.medications.forEach(function (medication) {
+                        tableBody.append(
+                            '<tr>' +
+                                '<td>' + medication.id + '</td>' +
+                                '<td>' + medication.name + '</td>' +
+                                '<td>' + medication.unit + '</td>' +
+                                '<td>' + medication.dosage + '</td>' +
+                                '<td>' + medication.route + '</td>' +
+                                '<td>' + medication.times_per_day + '</td>' +
+                                '<td>' + medication.note + '</td>' +
+                                '<td>' + medication.price + '</td>' +
+                                '<td>' +
+                                    // Sửa route cho hành động Sửa
+                                    '<a href="{{ route('medication.edit', ':id') }}" class="btn btn-warning btn-sm">Sửa</a>'.replace(':id', medication.id) +
+                                    // Sửa route cho hành động Xóa
+                                    '<form action="{{ route('medication.delete', ':id') }}" method="POST" style="display:inline;">'.replace(':id', medication.id) +
+                                        '@csrf' +
+                                        '@method('DELETE')' +
+                                        '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Bạn có chắc chắn muốn xóa?\')">Xóa</button>' +
+                                    '</form>' +
+                                '</td>' +
+                            '</tr>'
+                        );
+                    });
+                }
+
+                // Cập nhật phân trang
+                $('#pagination').html(response.pagination);
+            }
+        });
+    });
+});
+
+</script>
 @endsection

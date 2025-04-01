@@ -18,11 +18,24 @@
                     </div>
                     <div class="mb-3">
                         <label for="dosage" class="form-label">Liều dùng</label>
-                        <input type="text" class="form-control" id="dosage" name="dosage" required>
+                        <input type="text" class="form-control" id="dosage" name="dosage" >
                     </div>
                     <div class="mb-3">
                         <label for="route" class="form-label">Đường dùng</label>
-                        <input type="text" class="form-control" id="route" name="route" required>
+                        <input type="text" class="form-control" id="route" name="route" >
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="times_per_day" class="form-label">Số lần uống / ngày</label>
+                        <input type="text" class="form-control" id="times_per_day" name="times_per_day" >
+                    </div>
+                    <div class="mb-3">
+                        <label for="note" class="form-label">Ghi chú</label>
+                        <input type="text" class="form-control" id="note" name="note">
+                    </div>
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Giá</label>
+                        <input type="number" class="form-control" id="price" name="price" required>
                     </div>
                 </div>
                 <div class="modal-footer">

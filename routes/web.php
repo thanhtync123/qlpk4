@@ -9,6 +9,9 @@ use App\Http\Controllers\ExaminationController;
 use App\Http\Controllers\XRayController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UltrasoundController;
+use App\Http\Controllers\Doctor_noteController;
+use App\Http\Controllers\DiagnoseController;
+
 
 
 
@@ -37,7 +40,26 @@ Route::prefix('medication')->name('medication.')->group(function () {
     Route::get('/edit/{id}', [MedicationsController::class, 'edit'])->name('edit');
     Route::post('/update/{id}', [MedicationsController::class, 'update'])->name('update');
     Route::delete('/delete/{id}', [MedicationsController::class, 'destroy'])->name('delete');
+    Route::get('/search', [MedicationsController::class, 'search'])->name('search');
+
+
 });
+    // Lời dặn
+    Route::prefix('doctor_note')->name('doctor_note.')->group(function () {
+        Route::get('/', [Doctor_noteController::class, 'index'])->name('index');
+        Route::post('/store', [Doctor_noteController::class, 'store'])->name('store');
+        Route::get('/edit/{id}', [Doctor_noteController::class, 'edit'])->name('edit');
+        Route::put('/update/{id}', [Doctor_noteController::class, 'update'])->name('update');
+        Route::delete('/delete/{id}', [Doctor_noteController::class, 'destroy'])->name('destroy');
+    });
+    Route::prefix('diagnose')->name('diagnose.')->group(function () {
+        Route::get('/', [DiagnoseController::class, 'index'])->name('index');
+        Route::post('/store', [DiagnoseController::class, 'store'])->name('store');
+        Route::get('/edit/{id}', [DiagnoseController::class, 'edit'])->name('edit');
+        Route::put('/update/{id}', [DiagnoseController::class, 'update'])->name('update');
+        Route::delete('/delete/{id}', [DiagnoseController::class, 'destroy'])->name('destroy');
+    });
+    
 
 
 Route::prefix('examination')->name('examination.')->group(function () {
@@ -89,4 +111,7 @@ Route::prefix('examination')->name('examination.')->group(function () {
         // Route::post('/update/{id}', [EcgController::class, 'update'])
         // Route::delete('/delete/{id}', [EcgController::class, 'destroy'])
     });
+
+    
+
 });

@@ -38,6 +38,25 @@
                         Quản lý thuốc
                     </a>
                 </li>
+
+                <li class="nav-item">
+                    <a class="nav-link fw-semibold px-3 py-2 rounded 
+                        {{ Request::is('doctor_note') ? 'bg-warning text-dark' : 'text-white' }} 
+                        focus-ring focus-ring-primary"
+                        href="/doctor_note">
+                        Lời dặn
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link fw-semibold px-3 py-2 rounded 
+                        {{ Request::is('diagnose') ? 'bg-warning text-dark' : 'text-white' }} 
+                        focus-ring focus-ring-primary"
+                        href="/diagnose">
+                        Chẩn đoán
+                    </a>
+                </li>
+
                 <li class="nav-item">
                     <a class="nav-link fw-semibold px-3 py-2 rounded 
                         {{ Request::is('examination') ? 'bg-warning text-dark' : 'text-white' }} 
