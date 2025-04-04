@@ -22,21 +22,22 @@ class ExaminationController extends Controller
         $diagnoses = Diagnoses::all();
         $medications = Medication::all();
         $services = Service::all();
+        $exam_id = Examination::max('id')+1;
         return view('examination.examination'
         ,compact(
-        'patients','doctor_notes','diagnoses','medications','services'
+        'patients','exam_id','doctor_notes','diagnoses','medications','services'
         ));
     }
     public function storeMedication(Request $request)
     {
-        // dd($request->all());
+        //  dd($request->all());
         DB::beginTransaction();
         try {
             // 1. Lưu thông tin lần khám
             $examination = Examination::create([
                 'patient_id' => $request->patient_id,
                 'reason' => $request->reason,
-                'symptoms' => $request->symptoms,
+            'symptoms' => $request->symptoms,
                 'diagnosis_id' => $request->diagnosis_id,
                 'doctor_note_id' => $request->doctor_note_id,
                 'created_at' => Carbon::now(),
@@ -111,7 +112,7 @@ class ExaminationController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all()); 
+      
         DB::beginTransaction();
         try {
             // 1. Lưu thông tin lần khám

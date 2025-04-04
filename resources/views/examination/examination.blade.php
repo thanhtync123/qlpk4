@@ -208,6 +208,8 @@
                                                             onclick="submitForm('/examination/store-medication')"
                                                             class="btn btn-primary">Lưu toa thuốc
                                                     </button>
+                                                    <button type="button" id="print-prescription-button" onclick="printdonthuoc()"  class="btn btn-primary">In toa thuốc</button>
+                                                    
                                                 </td>
                                             </tr>
 
@@ -307,7 +309,100 @@
         </div>
     </div>
 
-    <script>
+<script>
+    function submitForm(url) {
+        var formData = $('#myForm').serialize();  // Serialize toàn bộ form để gửi đi
+    $.ajax({
+        url: url,
+        method: 'POST',
+        data: formData,
+        success: function(response) {
+            if(response.success) {
+                alert('Toa thuốc đã được lưu thành công.');
+                
+            } else {
+                alert('Có lỗi khi lưu toa thuốc.');
+            }
+        },
+        error: function() {
+            alert('Lỗi kết nối, vui lòng thử lại.');
+        }
+    });
+    }
+
+    
+   
+
+
+function printdonthuoc() {
+    // Lấy thông tin bệnh nhân
+    var patientName = $('#patient-name').val();
+    var patientDob = $('#patient-dob').val();
+    var patientGender = $('#patient-gender').val();
+    var patientAddress = $('#patient-address').val();
+
+    // Lấy thông tin khám bệnh
+    var reason = $('input[name="reason"]').val();
+    var symptoms = $('input[name="symptoms"]').val();
+    var diagnosis = $('select[name="diagnosis_id"] option:selected').text();
+    var doctorNote = $('select[name="doctor_note_id"] option:selected').text();
+
+    // Lấy danh sách thuốc
+    var medications = [];
+    $('#prescription-rows tr').each(function() {
+        var medication = {
+            name: $(this).find('.medication-select option:selected').text(),
+            unit: $(this).find('.unit').val(),
+            dosage: $(this).find('.dosage').val(),
+            route: $(this).find('.route').val(),
+            times: $(this).find('.times').val(),
+            note: $(this).find('.note').val(),
+            quantity: $(this).find('.quantity').val(),
+            unitPrice: $(this).find('.unit_price').val(),
+            totalPrice: $(this).find('.total_price').val()
+        };
+        medications.push(medication);
+    });
+
+    // Tạo HTML cho hóa đơn
+    var html = '<h1>Hóa đơn toa thuốc</h1>';
+    html += '<p><strong>Tên bệnh nhân:</strong> ' + patientName + '</p>';
+    html += '<p><strong>Ngày sinh:</strong> ' + patientDob + '</p>';
+    html += '<p><strong>Giới tính:</strong> ' + patientGender + '</p>';
+    html += '<p><strong>Địa chỉ:</strong> ' + patientAddress + '</p>';
+    html += '<p><strong>Lý do khám:</strong> ' + reason + '</p>';
+    html += '<p><strong>Triệu chứng:</strong> ' + symptoms + '</p>';
+    html += '<p><strong>Chẩn đoán:</strong> ' + diagnosis + '</p>';
+    html += '<p><strong>Lời dặn:</strong> ' + doctorNote + '</p>';
+
+    html += '<h3>Danh sách thuốc</h3>';
+    html += '<table border="1" style="width:100%; border-collapse: collapse;">';
+    html += '<tr><th>Tên thuốc</th><th>Đơn vị</th><th>Liều dùng</th><th>Đường dùng</th><th>Số lần/ngày</th><th>Ghi chú</th><th>Số lượng</th><th>Giá tiền/đv</th><th>Thành tiền</th></tr>';
+    medications.forEach(function(med) {
+        html += '<tr>';
+        html += '<td>' + med.name + '</td>';
+        html += '<td>' + med.unit + '</td>';
+        html += '<td>' + med.dosage + '</td>';
+        html += '<td>' + med.route + '</td>';
+        html += '<td>' + med.times + '</td>';
+        html += '<td>' + med.note + '</td>';
+        html += '<td>' + med.quantity + '</td>';
+        html += '<td>' + med.unitPrice + ' VND</td>';
+        html += '<td>' + med.totalPrice + ' VND</td>';
+        html += '</tr>';
+    });
+    html += '</table>';
+
+    // Mở cửa sổ in
+    var popupWin = window.open('', '_blank', 'width=800,height=600');
+    popupWin.document.open();
+    popupWin.document.write('<html><head><title>In toa thuốc</title></head><body>' + html + '</body></html>');
+    popupWin.document.close();
+    popupWin.print();
+}
+</script>
+   <script>
+
 
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll(".call-btn").forEach(button => {
