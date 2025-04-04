@@ -68,6 +68,7 @@ class XRayController extends Controller
                 ->join('examination_services', 'examinations.id', '=', 'examination_services.examination_id')
                 ->join('services', 'examination_services.service_id', '=', 'services.id')
                 ->leftJoin('examination_results', 'examination_services.id', '=', 'examination_results.examination_service_id')
+                ->leftJoin('templates', 'examination_results.template_id', '=', 'templates.id')
                 ->where('examinations.patient_id', $selectedPatientId)
                 ->where('services.type', 'X-quang')
                 ->select(
@@ -76,7 +77,9 @@ class XRayController extends Controller
                     'services.name',
                     'examination_results.result',
                     'examination_results.final_result',
-                    'examination_results.file_path'
+                    'examination_results.file_path',
+                    'examination_results.template_id',
+                    'templates.template_content'
                 )
                 ->get();
         }

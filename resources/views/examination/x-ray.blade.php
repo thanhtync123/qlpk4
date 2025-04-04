@@ -175,6 +175,8 @@
         @if(!empty($services) && count($services) > 0)
             @foreach ($services as $service)
                 <tr data-service-id="{{ $service->examination_service_id }}" 
+                    data-template-id="{{ $service->template_id }}"
+                    data-result="{{ $service->result }}"
                     class="{{ $service->result || $service->final_result || $service->file_path ? 'table-success' : '' }}">
                     <td class="text-center">{{ $service->examination_service_id }}</td>
                     <td class="text-center">{{ $service->service_id }}</td>
@@ -324,6 +326,27 @@
                 
                 document.getElementById("txb_service").value = serviceName;
                 document.getElementById("examination_service_id").value = serviceId;
+
+                let result = this.getAttribute("data-result");
+                let templateId = this.getAttribute("data-template-id");
+
+                if (templateId) {
+                    document.getElementById("templateSelect").value = templateId;
+                }
+
+                if (result) {
+                    document.querySelector("textarea[name='result']").value = result;
+                }
+
+                let hasResult = this.classList.contains('table-success');
+                let saveButton = document.getElementById("btnSave");
+                if (hasResult) {
+                    saveButton.disabled = true;
+                    saveButton.setAttribute('title', 'Chỉ định này đã có kết quả');
+                } else {
+                    saveButton.disabled = false;
+                    saveButton.removeAttribute('title');
+                }
             });
         });
 
