@@ -67,12 +67,16 @@ class XRayController extends Controller
             $services = DB::table('examinations')
                 ->join('examination_services', 'examinations.id', '=', 'examination_services.examination_id')
                 ->join('services', 'examination_services.service_id', '=', 'services.id')
+                ->leftJoin('examination_results', 'examination_services.id', '=', 'examination_results.examination_service_id')
                 ->where('examinations.patient_id', $selectedPatientId)
                 ->where('services.type', 'X-quang')
                 ->select(
                     'examination_services.id as examination_service_id',
                     'services.id as service_id',
-                    'services.name'
+                    'services.name',
+                    'examination_results.result',
+                    'examination_results.final_result',
+                    'examination_results.file_path'
                 )
                 ->get();
         }

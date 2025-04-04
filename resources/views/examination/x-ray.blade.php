@@ -162,32 +162,45 @@
                     </div>
                     <div class="card-body p-0" style="max-height: calc(100vh - 300px); overflow-y: auto;">
                         <div class="table-responsive">
-                            <table class="table table-hover table-striped mb-0">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th class="text-center" style="width: 15%">ID</th>
-                                        <th class="text-center" style="width: 15%">Mã</th>
-                                        <th>Tên chỉ định</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="serviceTable">
-                                    @if(!empty($services) && count($services) > 0)
-                                        @foreach ($services as $service)
-                                            <tr data-service-id="{{ $service->examination_service_id }}" class="cursor-pointer">
-                                                <td class="text-center">{{ $service->examination_service_id }}</td>
-                                                <td class="text-center">{{ $service->service_id }}</td>
-                                                <td class="clickable fw-medium">{{ $service->name }}</td>
-                                            </tr>
-                                        @endforeach
-                                    @else
-                                        <tr>
-                                            <td colspan="3" class="text-center text-muted">
-                                                <i class="fas fa-info-circle me-2"></i>Không có chỉ định nào
-                                            </td>
-                                        </tr>
-                                    @endif
-                                </tbody>
-                            </table>
+                        <table class="table table-hover table-striped mb-0">
+    <thead class="table-dark">
+        <tr>
+            <th class="text-center" style="width: 15%">ID</th>
+            <th class="text-center" style="width: 15%">Mã</th>
+            <th style="width: 50%">Tên chỉ định</th>
+            <th style="width: 20%">Trạng thái</th>
+        </tr>
+    </thead>
+    <tbody id="serviceTable">
+        @if(!empty($services) && count($services) > 0)
+            @foreach ($services as $service)
+                <tr data-service-id="{{ $service->examination_service_id }}" 
+                    class="{{ $service->result || $service->final_result || $service->file_path ? 'table-success' : '' }}">
+                    <td class="text-center">{{ $service->examination_service_id }}</td>
+                    <td class="text-center">{{ $service->service_id }}</td>
+                    <td class="clickable fw-medium">{{ $service->name }}</td>
+                    <td class="text-center">
+                        @if($service->result || $service->final_result || $service->file_path)
+                            <span class="badge bg-success">
+                                <i class="fas fa-check-circle me-1"></i>Đã có KQ
+                            </span>
+                        @else
+                            <span class="badge bg-warning">
+                                <i class="fas fa-clock me-1"></i>Chờ KQ
+                            </span>
+                        @endif
+                    </td>
+                </tr>
+            @endforeach
+        @else
+            <tr>
+                <td colspan="4" class="text-center text-muted">
+                    <i class="fas fa-info-circle me-2"></i>Không có chỉ định nào
+                </td>
+            </tr>
+        @endif
+    </tbody>
+</table>
                         </div>
                     </div>
                 </div>
