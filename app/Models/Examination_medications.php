@@ -8,5 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Examination_medications extends Model
 {
     use HasFactory;
-    protected $guarded = []; // Cho phép tất cả các cột có thể được gán
+    protected $guarded = []; 
+    public function medication()
+    {
+        return $this->belongsTo(Medication::class);
+    }
 }

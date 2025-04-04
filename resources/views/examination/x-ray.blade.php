@@ -8,11 +8,11 @@
     @include('inc._errors')
     <br>
 
-    <div class="container">
-        <div class="row">
-            <!-- Left Column: Search, Patient List, Patient Info, Services, etc. ( narrower, 5/12 width) -->
-            <div class="col-lg-5">
-                <!-- Card Tìm kiếm và Lọc -->
+    <div class="container-fluid">
+        <div class="row g-3">
+            <!-- Left Column (Patient Info and Services) -->
+            <div class="col-lg-4">
+                <!-- Search and Filter Card -->
                 <div class="card shadow border-0 rounded-3 mb-3">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-2">
                         <h5 class="mb-0"><i class="fas fa-search me-2"></i>Tìm kiếm và Lọc</h5>
@@ -23,41 +23,39 @@
                     <div class="collapse show" id="searchCollapse">
                         <div class="card-body">
                             <form action="{{ route('examination.x-ray.index') }}" method="get">
-                                <div class="row">
+                                <div class="row g-2">
                                     <div class="col-md-5">
-                                        <div class="input-group mb-3">
+                                        <div class="input-group">
                                             <span class="input-group-text bg-light"><i class="far fa-calendar-alt"></i></span>
-                                            <input type="date" name="start_date" id="start_date" class="form-control" value="2025-01-01" placeholder="Từ ngày">
+                                            <input type="date" name="start_date" class="form-control" value="2025-01-01">
                                         </div>
                                     </div>
                                     <div class="col-md-5">
-                                        <div class="input-group mb-3">
+                                        <div class="input-group">
                                             <span class="input-group-text bg-light"><i class="far fa-calendar-alt"></i></span>
-                                            <input type="date" name="end_date" id="end_date" class="form-control" value="2025-04-03" placeholder="Đến ngày">
+                                            <input type="date" name="end_date" class="form-control" value="2025-04-03">
                                         </div>
                                     </div>
                                     <div class="col-md-2">
-                                        <button type="submit" class="btn btn-primary w-100 d-flex align-items-center justify-content-center">
-                                            <i class="fas fa-filter me-2"></i> Lọc
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="fas fa-filter me-1"></i> Lọc
                                         </button>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <label class="form-label fw-semibold"><i class="fas fa-filter me-1"></i>Lọc theo kết quả:</label>
-                                        <div class="d-flex">
-                                            <div class="form-check me-4">
-                                                <input class="form-check-input" type="radio" name="result_filter" id="filterAll" value="all" checked>
-                                                <label class="form-check-label" for="filterAll">Tất cả</label>
-                                            </div>
-                                            <div class="form-check me-4">
-                                                <input class="form-check-input" type="radio" name="result_filter" id="filterWithResult" value="with_result">
-                                                <label class="form-check-label" for="filterWithResult">Đã có kết quả</label>
-                                            </div>
-                                            <div class="form-check me-4">
-                                                <input class="form-check-input" type="radio" name="result_filter" id="filterWithoutResult" value="without_result">
-                                                <label class="form-check-label" for="filterWithoutResult">Chưa có kết quả</label>
-                                            </div>
+                                <div class="mt-2">
+                                    <label class="form-label fw-semibold"><i class="fas fa-filter me-1"></i>Lọc theo kết quả:</label>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="result_filter" id="filterAll" value="all" checked>
+                                            <label class="form-check-label" for="filterAll">Tất cả</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="result_filter" id="filterWithResult" value="with_result">
+                                            <label class="form-check-label" for="filterWithResult">Đã có kết quả</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="result_filter" id="filterWithoutResult" value="without_result">
+                                            <label class="form-check-label" for="filterWithoutResult">Chưa có kết quả</label>
                                         </div>
                                     </div>
                                 </div>
@@ -66,7 +64,7 @@
                     </div>
                 </div>
 
-                <!-- Danh sách bệnh nhân -->
+                <!-- Patient List -->
                 <div class="card shadow border-0 rounded-3 mb-3">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-2">
                         <h5 class="mb-0"><i class="fas fa-users me-2"></i>Danh sách bệnh nhân</h5>
@@ -74,13 +72,9 @@
                     </div>
                     <div class="card-body p-0" style="max-height: 300px; overflow-y: auto;">
                         <div class="list-group list-group-flush">
-                            @php
-                                $currentDate = null;
-                            @endphp
+                            @php $currentDate = null; @endphp
                             @foreach($patients as $patient)
-                                @php
-                                    $patientDate = \Carbon\Carbon::parse($patient->created_at)->format('d/m/Y');
-                                @endphp
+                                @php $patientDate = \Carbon\Carbon::parse($patient->created_at)->format('d/m/Y'); @endphp
                                 @if($patientDate != $currentDate)
                                     <div class="list-group-item bg-light fw-bold text-primary py-1">
                                         <i class="far fa-calendar-alt me-2"></i>Ngày {{ $patientDate }}
@@ -93,9 +87,7 @@
                                     'end_date' => request('end_date'),
                                     'result_filter' => request('result_filter')
                                 ]) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-2 {{ $selectedPatientId == $patient->id ? 'active' : '' }}">
-                                    <div>
-                                        <i class="fas fa-user me-2"></i>{{ $patient->name }}
-                                    </div>
+                                    <div><i class="fas fa-user me-2"></i>{{ $patient->name }}</div>
                                     <span class="btn btn-sm {{ $selectedPatientId == $patient->id ? 'btn-light' : 'btn-primary' }} rounded-pill">
                                         <i class="fas fa-chevron-right"></i>
                                     </span>
@@ -105,16 +97,70 @@
                     </div>
                 </div>
 
-                <!-- Bảng chỉ định -->
+                <!-- Patient Information -->
                 <div class="card shadow border-0 rounded-3 mb-3">
+                    <div class="card-header bg-primary text-white py-2">
+                        <h5 class="mb-0"><i class="fas fa-user-circle me-2"></i>Thông tin bệnh nhân</h5>
+                    </div>
+                    <div class="card-body">
+                        @if($selectedPatientId)
+                            @php $selectedPatient = $patients->firstWhere('id', $selectedPatientId); @endphp
+                            @if($selectedPatient)
+                                <div class="row g-2">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" value="{{ $selectedPatient->name }}" readonly>
+                                            <label><i class="fas fa-user me-1"></i>Tên BN</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="date" class="form-control" value="{{ $selectedPatient->date_of_birth }}" readonly>
+                                            <label><i class="fas fa-birthday-cake me-1"></i>Ngày sinh</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-floating">
+                                            <input type="number" class="form-control" value="{{ \Carbon\Carbon::parse($selectedPatient->date_of_birth)->age }}" readonly>
+                                            <label><i class="fas fa-sort-numeric-up me-1"></i>Tuổi</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" value="{{ $selectedPatient->gender }}" readonly>
+                                            <label><i class="fas fa-venus-mars me-1"></i>Giới tính</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" value="{{ $selectedPatient->address }}" readonly>
+                                            <label><i class="fas fa-map-marker-alt me-1"></i>Địa chỉ</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        @else
+                            <div class="text-center py-4 text-muted">
+                                <i class="fas fa-user-plus fa-3x mb-3"></i>
+                                <p>Vui lòng chọn một bệnh nhân từ danh sách</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle Column (Service Orders) -->
+            <div class="col-lg-4">
+                <!-- Service Orders -->
+                <div class="card shadow border-0 rounded-3 h-100">
                     <div class="card-header bg-primary text-white py-2">
                         <h5 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>Bảng chỉ định</h5>
                     </div>
-                    <div class="card-body p-0" style="max-height: 250px; overflow-y: auto;">
+                    <div class="card-body p-0" style="max-height: calc(100vh - 300px); overflow-y: auto;">
                         <div class="table-responsive">
                             <table class="table table-hover table-striped mb-0">
                                 <thead class="table-dark">
-                                    <tr id="td_service">
+                                    <tr>
                                         <th class="text-center" style="width: 15%">ID</th>
                                         <th class="text-center" style="width: 15%">Mã</th>
                                         <th>Tên chỉ định</th>
@@ -141,62 +187,11 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Thông tin bệnh nhân -->
-                <div class="card shadow border-0 rounded-3 mb-3">
-                    <div class="card-header bg-primary text-white py-2">
-                        <h5 class="mb-0"><i class="fas fa-user-circle me-2"></i>Thông tin bệnh nhân</h5>
-                    </div>
-                    <div class="card-body">
-                        @if($selectedPatientId)
-                            @php
-                                $selectedPatient = $patients->firstWhere('id', $selectedPatientId);
-                            @endphp
-                            @if($selectedPatient)
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="patientName" value="{{ $selectedPatient->name }}" readonly>
-                                            <label for="patientName"><i class="fas fa-user me-1"></i>Tên BN</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="date" class="form-control" id="patientDob" value="{{ $selectedPatient->date_of_birth }}" readonly>
-                                            <label for="patientDob"><i class="fas fa-birthday-cake me-1"></i>Ngày sinh</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-floating">
-                                            <input type="number" class="form-control" id="patientAge" value="{{ \Carbon\Carbon::parse($selectedPatient->date_of_birth)->age }}" readonly>
-                                            <label for="patientAge"><i class="fas fa-sort-numeric-up me-1"></i>Tuổi</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="patientGender" value="{{ $selectedPatient->gender }}" readonly>
-                                            <label for="patientGender"><i class="fas fa-venus-mars me-1"></i>Giới tính</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="patientAddress" value="{{ $selectedPatient->address }}" readonly>
-                                            <label for="patientAddress"><i class="fas fa-map-marker-alt me-1"></i>Địa chỉ</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                        @else
-                            <div class="text-center py-4 text-muted">
-                                <i class="fas fa-user-plus fa-3x mb-3"></i>
-                                <p>Vui lòng chọn một bệnh nhân từ danh sách</p>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-
-                <!-- Other form fields except description -->
-                <div class="card shadow border-0 rounded-3 mb-3">
+            <!-- Right Column (Examination Form) -->
+            <div class="col-lg-4">
+                <div class="card shadow border-0 rounded-3 h-100">
                     <div class="card-header bg-primary text-white py-2">
                         <h5 class="mb-0"><i class="fas fa-x-ray me-2"></i>Kết quả chụp</h5>
                     </div>
@@ -214,7 +209,7 @@
 
                             <div class="mb-3">
                                 <label class="form-label fw-semibold"><i class="fas fa-file-alt me-1"></i>Biểu mẫu:</label>
-                                <select class="form-select form-select-lg" name="template_id" id="templateSelect">
+                                <select class="form-select" name="template_id" id="templateSelect">
                                     <option selected>Chọn biểu mẫu</option>
                                     @foreach($templates as $item)
                                         <option value="{{ $item->id }}" data-content="{{ $item->template_content }}">{{ $item->name }}</option>
@@ -224,44 +219,41 @@
 
                             <div class="mb-3">
                                 <label class="form-label fw-semibold"><i class="fas fa-file-upload me-1"></i>Tải lên file kết quả:</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light"><i class="fas fa-file-image"></i></span>
-                                    <input type="file" class="form-control" name="file_path">
-                                </div>
+                                <input type="file" class="form-control" name="file_path">
                             </div>
 
-                   
-                                <button type="submit" class="btn btn-success btn-lg">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold"><i class="fas fa-comment-medical me-2"></i>Mô tả:</label>
+                                <textarea name="result" class="form-control" id="resultTextarea" rows="8" style="resize: none;"></textarea>
+                            </div>
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button type="submit" class="btn btn-success me-md-2">
                                     <i class="fas fa-save me-2"></i>Lưu
                                 </button>
-                      
-
+                                <button type="button" class="btn btn-primary me-md-2">
+                                    <i class="fas fa-edit me-2"></i>Sửa
+                                </button>
+                                <button type="button" class="btn btn-secondary">
+                                    <i class="fas fa-print me-2"></i>In
+                                </button>
+                            </div>
                         </form>
-                                <button type="submit" class="btn btn-success btn-lg">
-                                    <i class="fas fa-save me-2"></i>Sửa
-                                </button>
-                                
-                                <button type="submit" class="btn btn-success btn-lg">
-                                    <i class="fas fa-save me-2"></i>In
-                                </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Column: Description Section (wider, 7/12 width) -->
-            <div class="col-lg-7">
-                <div class="card shadow border-0 rounded-3 h-100">
-                    <div class="card-header bg-primary text-white py-2">
-                        <h5 class="mb-0"><i class="fas fa-comment-medical me-2"></i>Mô tả</h5>
-                    </div>
-                    <div class="card-body">
-                        <textarea name="result" class="form-control h-100" id="resultTextarea" style="resize: none;"></textarea>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 @endsection
+
+
+
+
+
+
+
+
+
 
 
     <script>

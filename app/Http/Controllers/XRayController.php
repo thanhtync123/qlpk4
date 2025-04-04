@@ -88,6 +88,7 @@ class XRayController extends Controller
     
     public function store(Request $request)
     {
+    
         $request->validate([
             'examination_service_id' => 'required|exists:examination_services,id',
             'template_id' => 'required|exists:templates,id',

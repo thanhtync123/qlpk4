@@ -80,6 +80,9 @@
                         <div class="card-header bg-light">Thông tin khám</div>
                         <div class="card-body">
                             <div class="row mt-2">
+                         
+                                    <input type="hidden" id="exam_id" class="form-control" value = {{$exam_id_med}}>
+                           
                                 <div class="col-md-6">
                                     <label class="form-label">Lý do khám:</label>
                                     <input type="text" name="reason" class="form-control">
@@ -204,11 +207,17 @@
                                             </tr>
                                             <tr>
                                                 <td colspan="10" class="text-center">
-                                                    <button type="button"
-                                                            onclick="submitForm('/examination/store-medication')"
-                                                            class="btn btn-primary">Lưu toa thuốc
+
+                                                <button type="button" onclick="submitForm('/examination/store-medication')" class="btn btn-primary">
+                                                    <i class="fa fa-save" style="color: white;"></i> Lưu toa thuốc
+                                                </button>
+                                                <a href="{{ route('examination.print_prescription', ['id' => $exam_id_med - 1]) }}">
+
+                                                    <button type="button" id="print-prescription-button" class="btn btn-success">
+                                                        In toa thuốc vừa lưu
                                                     </button>
-                                                    <button type="button" id="print-prescription-button" onclick="printdonthuoc()"  class="btn btn-primary">In toa thuốc</button>
+                                                </a>
+
                                                     
                                                 </td>
                                             </tr>
@@ -292,6 +301,11 @@
                                                 <button type="button" onclick="submitForm('/examination/store-service')"
                                                         class="btn btn-primary">Lưu chỉ định
                                                 </button>
+                                                <a href="{{ route('examination.print_service', ['id' => $exam_id_ser - 1]) }}">
+                                                <button type="button" 
+                                                        class="btn btn-primary">In chỉ định vừa lưu
+                                                </button>
+                                                </a>
                                             </td>
                                         </tr>
 
@@ -308,101 +322,55 @@
             </div>
         </div>
     </div>
-
 <script>
-    function submitForm(url) {
-        var formData = $('#myForm').serialize();  // Serialize toàn bộ form để gửi đi
-    $.ajax({
-        url: url,
-        method: 'POST',
-        data: formData,
-        success: function(response) {
-            if(response.success) {
-                alert('Toa thuốc đã được lưu thành công.');
-                
-            } else {
-                alert('Có lỗi khi lưu toa thuốc.');
-            }
-        },
-        error: function() {
-            alert('Lỗi kết nối, vui lòng thử lại.');
+    $(document).ready(function() {
+    // Đọc trạng thái từ localStorage và kích hoạt tab tương ứng khi trang tải lại
+    const activeTab = localStorage.getItem('activeTab');
+    if (activeTab) {
+        $(`#${activeTab}`).tab('show'); // Hiển thị tab đã được lưu
+        // Gọi hàm để ẩn hoặc hiển thị các trường liên quan
+        if (activeTab === 'lab-test-tab') {
+            disableExaminationFields(true); // Ẩn các trường khi tab "Chỉ định cận lâm sàng" được chọn
+        } else {
+            disableExaminationFields(false); // Hiển thị lại các trường khi tab "Toa thuốc" được chọn
         }
-    });
     }
 
-    
-   
-
-
-function printdonthuoc() {
-    // Lấy thông tin bệnh nhân
-    var patientName = $('#patient-name').val();
-    var patientDob = $('#patient-dob').val();
-    var patientGender = $('#patient-gender').val();
-    var patientAddress = $('#patient-address').val();
-
-    // Lấy thông tin khám bệnh
-    var reason = $('input[name="reason"]').val();
-    var symptoms = $('input[name="symptoms"]').val();
-    var diagnosis = $('select[name="diagnosis_id"] option:selected').text();
-    var doctorNote = $('select[name="doctor_note_id"] option:selected').text();
-
-    // Lấy danh sách thuốc
-    var medications = [];
-    $('#prescription-rows tr').each(function() {
-        var medication = {
-            name: $(this).find('.medication-select option:selected').text(),
-            unit: $(this).find('.unit').val(),
-            dosage: $(this).find('.dosage').val(),
-            route: $(this).find('.route').val(),
-            times: $(this).find('.times').val(),
-            note: $(this).find('.note').val(),
-            quantity: $(this).find('.quantity').val(),
-            unitPrice: $(this).find('.unit_price').val(),
-            totalPrice: $(this).find('.total_price').val()
-        };
-        medications.push(medication);
+    // Khi nhấn vào tab "Chỉ định cận lâm sàng"
+    $('#lab-test-tab').on('click', function() {
+        localStorage.setItem('activeTab', 'lab-test-tab'); // Lưu tab hiện tại
+        disableExaminationFields(true); // Ẩn các trường không liên quan
     });
 
-    // Tạo HTML cho hóa đơn
-    var html = '<h1>Hóa đơn toa thuốc</h1>';
-    html += '<p><strong>Tên bệnh nhân:</strong> ' + patientName + '</p>';
-    html += '<p><strong>Ngày sinh:</strong> ' + patientDob + '</p>';
-    html += '<p><strong>Giới tính:</strong> ' + patientGender + '</p>';
-    html += '<p><strong>Địa chỉ:</strong> ' + patientAddress + '</p>';
-    html += '<p><strong>Lý do khám:</strong> ' + reason + '</p>';
-    html += '<p><strong>Triệu chứng:</strong> ' + symptoms + '</p>';
-    html += '<p><strong>Chẩn đoán:</strong> ' + diagnosis + '</p>';
-    html += '<p><strong>Lời dặn:</strong> ' + doctorNote + '</p>';
-
-    html += '<h3>Danh sách thuốc</h3>';
-    html += '<table border="1" style="width:100%; border-collapse: collapse;">';
-    html += '<tr><th>Tên thuốc</th><th>Đơn vị</th><th>Liều dùng</th><th>Đường dùng</th><th>Số lần/ngày</th><th>Ghi chú</th><th>Số lượng</th><th>Giá tiền/đv</th><th>Thành tiền</th></tr>';
-    medications.forEach(function(med) {
-        html += '<tr>';
-        html += '<td>' + med.name + '</td>';
-        html += '<td>' + med.unit + '</td>';
-        html += '<td>' + med.dosage + '</td>';
-        html += '<td>' + med.route + '</td>';
-        html += '<td>' + med.times + '</td>';
-        html += '<td>' + med.note + '</td>';
-        html += '<td>' + med.quantity + '</td>';
-        html += '<td>' + med.unitPrice + ' VND</td>';
-        html += '<td>' + med.totalPrice + ' VND</td>';
-        html += '</tr>';
+    // Khi nhấn vào tab "Toa thuốc"
+    $('#prescription-tab').on('click', function() {
+        localStorage.setItem('activeTab', 'prescription-tab'); // Lưu tab hiện tại
+        disableExaminationFields(false); // Hiển thị lại các trường liên quan
     });
-    html += '</table>';
 
-    // Mở cửa sổ in
-    var popupWin = window.open('', '_blank', 'width=800,height=600');
-    popupWin.document.open();
-    popupWin.document.write('<html><head><title>In toa thuốc</title></head><body>' + html + '</body></html>');
-    popupWin.document.close();
-    popupWin.print();
-}
+    // Hàm để disable hoặc enable các trường trong phần "Thông tin khám"
+    function disableExaminationFields(disable) {
+        const fields = [
+            'input[name="reason"]', 
+            'input[name="symptoms"]', 
+            'select[name="diagnosis_id"]', 
+            'select[name="doctor_note_id"]'
+        ];
+
+        // Ẩn các trường dữ liệu khi "Chỉ định cận lâm sàng" được chọn
+        fields.forEach(function(field) {
+            if(disable) {
+                $(field).closest('.col-md-6').hide();  // Ẩn cả label và input
+            } else {
+                $(field).closest('.col-md-6').show();  // Hiển thị lại
+            }
+        });
+    }
+});
+
 </script>
-   <script>
 
+<script>
 
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll(".call-btn").forEach(button => {

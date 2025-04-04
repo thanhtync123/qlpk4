@@ -22,10 +22,11 @@ class ExaminationController extends Controller
         $diagnoses = Diagnoses::all();
         $medications = Medication::all();
         $services = Service::all();
-        $exam_id = Examination::max('id')+1;
+        $exam_id_med = Examination::where('type', 'toa thuốc')->max('id') + 1;
+        $exam_id_ser = Examination::where('type', 'chỉ định')->max('id') + 1;
         return view('examination.examination'
         ,compact(
-        'patients','exam_id','doctor_notes','diagnoses','medications','services'
+        'patients','exam_id_med','exam_id_ser','doctor_notes','diagnoses','medications','services'
         ));
     }
     public function storeMedication(Request $request)
@@ -37,9 +38,10 @@ class ExaminationController extends Controller
             $examination = Examination::create([
                 'patient_id' => $request->patient_id,
                 'reason' => $request->reason,
-            'symptoms' => $request->symptoms,
+                'symptoms' => $request->symptoms,
                 'diagnosis_id' => $request->diagnosis_id,
                 'doctor_note_id' => $request->doctor_note_id,
+                'type' => "toa thuốc",
                 'created_at' => Carbon::now(),
             ]);
     
@@ -53,6 +55,7 @@ class ExaminationController extends Controller
                     'route' => $med['route'],
                     'times' => $med['times'],
                     'note' => $med['note'],
+                    'quantity' => $med['quantity'],
                     'price' => $med['unit_price'],
                 ]);
             }
@@ -79,6 +82,7 @@ class ExaminationController extends Controller
                 'symptoms' => $request->symptoms,
                 'diagnosis_id' => $request->diagnosis_id,
                 'doctor_note_id' => $request->doctor_note_id,
+                'type' => "chỉ định",
                 'created_at' => Carbon::now(),
             ]);
 
@@ -165,4 +169,74 @@ class ExaminationController extends Controller
 
         }
     }
+    public function print_prescription(Request $request, $id)
+{
+    $prescriptionDetails = DB::table('examinations as e')
+    ->join('patients as p', 'p.id', '=', 'e.patient_id')
+    ->join('examination_medications as em', 'em.examination_id', '=', 'e.id')
+    ->join('diagnoses as d', 'd.id', '=', 'e.diagnosis_id')
+    ->join('doctor_notes as dn', 'dn.id', '=', 'e.doctor_note_id')
+    ->join('medications as m', 'm.id', '=', 'em.medication_id')
+    ->select(
+        'e.id as examination_id',
+        'p.id as patient_id',
+        'p.name as patient_name',
+        'p.date_of_birth as patient_date_of_birth',
+        'p.gender as patient_gender',
+        'p.phone as patient_phone',
+        'p.address as patient_address',
+        'em.medication_id as medication_id',
+        'm.name as medication_name',
+        'em.unit as unit',
+        'em.dosage as dosage',
+        'em.route as route',
+        'em.times as times_per_day',
+        'em.note as note',
+        'em.quantity as quantity',
+        'em.price as price_per_unit',
+        DB::raw('(em.price * em.quantity) as total_price_per_item'),
+        'd.name as diagnosis_name',  
+        'dn.content as doctor_note_content',  
+        'e.reason as examination_reason', 
+        'e.symptoms as examination_symptoms' 
+    )
+    ->where('e.id', $id)
+    ->get();
+
+return view('print.print_examination_prescription', compact('prescriptionDetails'));
+
 }
+public function print_service(Request $request,$id)
+{
+    $examinationService = DB::table('examinations as e')
+        ->join('patients as p', 'e.patient_id', '=', 'p.id')
+        ->join('examination_services as es', 'e.id', '=', 'es.examination_id')
+        ->join('services as s', 'es.service_id', '=', 's.id')
+        ->select(
+            'e.id as Mã phiếu khám',
+            'p.name as Tên bệnh nhân',
+            'p.date_of_birth as Ngày sinh',
+            'p.gender as Giới tính',
+            'p.phone as Số điện thoại',
+            'p.address as Địa chỉ',
+            's.id as Mã dịch vụ',
+            's.name as Tên dịch vụ',
+            's.type as Loại dịch vụ',
+            'es.price as Đơn giá',
+            's.price as Giá gốc'
+        )
+        ->where('e.id', $id)
+        ->get();
+
+    return view('print.print_examination_service', compact('examinationService'));
+}
+
+
+        
+    
+
+ 
+    
+
+    }
+
