@@ -32,12 +32,14 @@
                 <th>Giới tính</th>
                 <th>SĐT</th>
                 <th>Địa chỉ</th>
+                <th>Ngày tiếp nhận    </th>
+                <th>Lần khám gần nhất</th>
                 <th>Hành động</th>
             </tr>
         </thead>
         <tbody>
             @forelse ($patients as $patient)
-            <tr>
+            <tr class="{{ $patient->updated_at->isToday() ? 'table-success' : '' }}">
                 <td>{{ $patient->id }}</td>
                 <td>{{ $patient->name }}</td>
                 <td>{{ \Carbon\Carbon::parse($patient->date_of_birth)->format('d/m/Y') }}</td>
@@ -45,6 +47,14 @@
                 <td>{{ $patient->gender == 'Nam' ? 'Nam' : 'Nữ' }}</td>
                 <td>{{ $patient->phone }}</td>
                 <td>{{ $patient->address }}</td>
+                <td>{{ $patient->created_at->format('d/m/Y H:i') }}</td>
+                <td class="{{ $patient->updated_at->isToday() ? 'table-success' : '' }}">
+                    {{ $patient->updated_at->format('d/m/Y H:i') }}
+                    @if($patient->updated_at->isToday())
+                        <span class="badge bg-success">Hôm nay</span>
+                    @endif
+                </td>
+
                 <td>
                     <a href="" class="btn btn-info btn-sm">Xem</a>
                     
@@ -59,6 +69,10 @@
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</button>
                     </form>
+                    
+                    <a href="{{ url('/patients/re-admission/' . $patient->id) }}" >
+                        <button type="button" class="btn btn-primary btn-sm">Tái tiếp nhận</button>
+                    </a>
 
                 </td>
             </tr>

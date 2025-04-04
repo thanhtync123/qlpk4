@@ -19,11 +19,12 @@ Route::get('/dashboard', [DashboardController::class, 'index']);
 
 
 Route::prefix('/patients')->group(function () {
-    Route::get('/', [PatientsController::class, 'index']); // patient/
-    Route::post('/store', [PatientsController::class, 'store']); // patient/store
+    Route::get('/', [PatientsController::class, 'index']); 
+    Route::post('/store', [PatientsController::class, 'store']); 
     Route::get('/edit/{id}', [PatientsController::class, 'edit']);
-    Route::put('/update/{id}', [PatientsController::class, 'update']); // patient/{id}
-    Route::delete('/{id}', [PatientsController::class, 'destroy']); // patient/{id}
+    Route::put('/update/{id}', [PatientsController::class, 'update']); 
+    Route::delete('/{id}', [PatientsController::class, 'destroy']);
+    Route::get('/re-admission/{id}', [PatientsController::class, 'Re_admission'])->name('patients.re_admission');
 });
 
 Route::prefix('service')->name('service.')->group(function () {

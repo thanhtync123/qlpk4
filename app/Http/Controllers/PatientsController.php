@@ -49,8 +49,11 @@ class PatientsController extends Controller
         $patient->update($request->validated());
         return redirect('/patients')->with('success', 'Bệnh nhân đã được cập nhật thành công.');
     }
-    
-    
-    
+    public function Re_admission(Request $request, $id)
+    {
+        $patient = Patient::findOrFail($id);
+        $patient->touch(); // This will update the updated_at timestamp
+        return redirect('/patients')->with('success', 'Bệnh nhân đã được tái nhập viện thành công.');
+    }
 }
-    
+

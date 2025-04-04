@@ -22,18 +22,26 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach($patients as $item)
-                            <tr>
+                        @forelse($patients as $item)
+                            <tr class="table-success">
                                 <td>{{$item->id}}</td>
                                 <td>{{$item->name}}</td>
                                 <td>
-                                    <button class="btn btn-outline-primary btn-sm call-btn" data-id="{{$item->id}}"
-                                            data-name="{{$item->name}}" data-dob="{{$item->date_of_birth}}"
-                                            data-gender="{{$item->gender}}" data-address="{{$item->address}}">Chọn
+                                    <button class="btn btn-outline-primary btn-sm call-btn" 
+                                            data-id="{{$item->id}}"
+                                            data-name="{{$item->name}}" 
+                                            data-dob="{{$item->date_of_birth}}"
+                                            data-gender="{{$item->gender}}" 
+                                            data-address="{{$item->address}}">
+                                        Chọn
                                     </button>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="3" class="text-center">Không có bệnh nhân nào được tiếp nhận hôm nay</td>
+                            </tr>
+                        @endforelse
                         </tbody>
                     </table>
                 </div>

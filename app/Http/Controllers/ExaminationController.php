@@ -17,7 +17,9 @@ class ExaminationController extends Controller
 {
     public function index()
     {
-        $patients = Patient::all();
+        $patients = Patient::whereDate('updated_at', today())
+        ->latest('updated_at')
+        ->get();
         $doctor_notes = Doctor_notes::all();
         $diagnoses = Diagnoses::all();
         $medications = Medication::all();

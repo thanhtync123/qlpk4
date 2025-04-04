@@ -27,13 +27,15 @@
                                     <div class="col-md-5">
                                         <div class="input-group">
                                             <span class="input-group-text bg-light"><i class="far fa-calendar-alt"></i></span>
-                                            <input type="date" name="start_date" class="form-control" value="2025-01-01">
+                                            <input type="date" name="start_date" class="form-control" 
+                                                value="{{ request('start_date', now()->format('Y-m-d')) }}">
                                         </div>
                                     </div>
                                     <div class="col-md-5">
                                         <div class="input-group">
                                             <span class="input-group-text bg-light"><i class="far fa-calendar-alt"></i></span>
-                                            <input type="date" name="end_date" class="form-control" value="2025-04-03">
+                                            <input type="date" name="end_date" class="form-control" 
+                                                value="{{ request('end_date', now()->format('Y-m-d')) }}">
                                         </div>
                                     </div>
                                     <div class="col-md-2">
@@ -46,15 +48,15 @@
                                     <label class="form-label fw-semibold"><i class="fas fa-filter me-1"></i>Lọc theo kết quả:</label>
                                     <div class="d-flex flex-wrap gap-2">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="result_filter" id="filterAll" value="all" checked>
+                                            <input class="form-check-input" type="radio" name="result_filter" id="filterAll" value="all" {{ request('result_filter', 'all') == 'all' ? 'checked' : '' }}>
                                             <label class="form-check-label" for="filterAll">Tất cả</label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="result_filter" id="filterWithResult" value="with_result">
+                                            <input class="form-check-input" type="radio" name="result_filter" id="filterWithResult" value="with_result" {{ request('result_filter') == 'with_result' ? 'checked' : '' }}>
                                             <label class="form-check-label" for="filterWithResult">Đã có kết quả</label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="result_filter" id="filterWithoutResult" value="without_result">
+                                            <input class="form-check-input" type="radio" name="result_filter" id="filterWithoutResult" value="without_result" {{ request('result_filter') == 'without_result' ? 'checked' : '' }}>
                                             <label class="form-check-label" for="filterWithoutResult">Chưa có kết quả</label>
                                         </div>
                                     </div>
@@ -65,43 +67,45 @@
                 </div>
 
                 <!-- Patient List -->
-                <div class="card shadow border-0 rounded-3 mb-3">
-                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-2">
-                        <h5 class="mb-0"><i class="fas fa-users me-2"></i>Danh sách bệnh nhân</h5>
-                        <span class="badge bg-light text-primary rounded-pill">{{ $patients->count() }}</span>
-                    </div>
-                    <div class="card-body p-0" style="max-height: 300px; overflow-y: auto;">
-                        <div class="list-group list-group-flush">
-                            @php $currentDate = null; @endphp
-                            @foreach($patients as $patient)
-                                @php $patientDate = \Carbon\Carbon::parse($patient->created_at)->format('d/m/Y'); @endphp
-                                @if($patientDate != $currentDate)
-                                    <div class="list-group-item bg-light fw-bold text-primary py-1">
-                                        <i class="far fa-calendar-alt me-2"></i>Ngày {{ $patientDate }}
-                                    </div>
-                                    @php $currentDate = $patientDate; @endphp
-                                @endif
-                                <a href="{{ route('examination.x-ray.index', [
-                                    'patient_id' => $patient->id, 
-                                    'start_date' => request('start_date'), 
-                                    'end_date' => request('end_date'),
-                                    'result_filter' => request('result_filter')
-                                ]) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-2 {{ $selectedPatientId == $patient->id ? 'active' : '' }}">
-                                    <div><i class="fas fa-user me-2"></i>{{ $patient->name }}</div>
-                                    <span class="btn btn-sm {{ $selectedPatientId == $patient->id ? 'btn-light' : 'btn-primary' }} rounded-pill">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </span>
-                                </a>
-                            @endforeach
-                        </div>
+
+            <div class="card shadow border-0 rounded-3 mb-3">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-2">
+                    <h5 class="mb-0"><i class="fas fa-users me-2"></i>Danh sách bệnh nhân</h5>
+                    <span class="badge bg-light text-primary rounded-pill">{{ $patients->count() }}</span>
+                </div>
+                <div class="card-body p-0" style="max-height: 300px; overflow-y: auto;">
+                    <div class="list-group list-group-flush">
+                        @php $currentDate = null; @endphp
+                        @foreach($patients as $patient)
+                            @php $patientDate = \Carbon\Carbon::parse($patient->created_at)->format('d/m/Y'); @endphp
+                            @if($patientDate != $currentDate)
+                                <div class="list-group-item bg-light fw-bold text-primary py-1">
+                                    <i class="far fa-calendar-alt me-2"></i>Ngày {{ $patientDate }}
+                                </div>
+                                @php $currentDate = $patientDate; @endphp
+                            @endif
+                            <a href="{{ route('examination.x-ray.index', [
+    'patient_id' => $patient->id, 
+    'start_date' => request('start_date'), 
+    'end_date' => request('end_date'),
+    'result_filter' => request('result_filter')
+]) }}" class="list-group-item {{ $selectedPatientId == $patient->id ? '' : 'list-group-item-action' }} d-flex justify-content-between align-items-center py-2">
+
+                                <div><i class="fas fa-user me-2"></i>{{ $patient->name }}</div>
+                                <span class="btn btn-sm {{ $selectedPatientId == $patient->id ? 'btn-light' : 'btn-primary' }} rounded-pill">
+                                    <i class="fas fa-chevron-right"></i>
+                                </span>
+                            </a>
+                        @endforeach
                     </div>
                 </div>
-
+            </div>
                 <!-- Patient Information -->
                 <div class="card shadow border-0 rounded-3 mb-3">
-                    <div class="card-header bg-primary text-white py-2">
-                        <h5 class="mb-0"><i class="fas fa-user-circle me-2"></i>Thông tin bệnh nhân</h5>
-                    </div>
+                <div class="card-header bg-secondary text-white py-2">
+                    <h5 class="mb-0"><i class="fas fa-user-circle me-2"></i>Thông tin bệnh nhân</h5>
+                </div>
+
                     <div class="card-body">
                         @if($selectedPatientId)
                             @php $selectedPatient = $patients->firstWhere('id', $selectedPatientId); @endphp
@@ -224,39 +228,41 @@
 
                             <div class="mb-3">
                                 <label class="form-label fw-semibold"><i class="fas fa-comment-medical me-2"></i>Mô tả:</label>
-                                <textarea name="result" class="form-control" id="resultTextarea" rows="8" style="resize: none;"></textarea>
+                                <textarea name="result" class="form-control" id="resultTextarea" rows="12" style="resize: none; height: 300px;"></textarea>
+
                             </div>
 
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <button type="submit" class="btn btn-success me-md-2">
-                                    <i class="fas fa-save me-2"></i>Lưu
-                                </button>
-                                <button type="button" class="btn btn-primary me-md-2">
-                                    <i class="fas fa-edit me-2"></i>Sửa
-                                </button>
-                                <button type="button" class="btn btn-secondary">
-                                    <i class="fas fa-print me-2"></i>In
-                                </button>
-                            </div>
+    <button type="submit" id="btnSave" class="btn btn-success me-md-2">
+        <i class="fas fa-save me-2"></i>Lưu
+    </button>
+    <button type="button" id="btnEdit" class="btn btn-primary me-md-2">
+        <i class="fas fa-edit me-2"></i>Sửa
+    </button>
+    <button type="button" id="btnPrint" class="btn btn-secondary">
+        <i class="fas fa-print me-2"></i>In
+    </button>
+</div>
+
                         </form>
+                    </div>                    
+                    
                     </div>
                 </div>
             </div>
         </div>
     </div>
 @endsection
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+</script>
 
 
 
 
+<script>
 
-
-
-
-
-
-
-    <script>
         function selectPatient(patient) {
             if (!patient) return;
             
@@ -333,5 +339,8 @@
             let content = selectedOption.getAttribute("data-content") || "Không có nội dung mẫu.";
             descriptionTextArea.value = content;
         });
-    
+  
     </script>
+
+
+
