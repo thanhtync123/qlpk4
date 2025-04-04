@@ -11,12 +11,14 @@ use App\Models\Service;
 use App\Models\Examination;
 use App\Models\Examination_medications;
 use App\Models\Examination_services;
+use App\Models\Template;
 use Illuminate\Support\Facades\DB;
 // return response()->json(['message' => 'Đã route đến store() thành công!']);
 class ExaminationController extends Controller
 {
     public function index()
     {
+        $patients = Patient::all();
         $patients = Patient::whereDate('updated_at', today())
         ->latest('updated_at')
         ->get();
@@ -31,6 +33,7 @@ class ExaminationController extends Controller
         'patients','exam_id_med','exam_id_ser','doctor_notes','diagnoses','medications','services'
         ));
     }
+
     public function storeMedication(Request $request)
     {
         //  dd($request->all());
